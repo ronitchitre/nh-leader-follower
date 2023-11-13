@@ -24,8 +24,8 @@ def l_psi_dynamics(state, u, state_L, state_L_dot):
 
 def flat_to_nonlinear(y, y_dot, state_L, state_L_dot):
     theta_L = state_L[2]
-    x_L1_dot = state_L_dot[1]
-    x_L2_dot = state_L_dot[2]
+    x_L1_dot = state_L_dot[0]
+    x_L2_dot = state_L_dot[1]
 
     l = np.linalg.norm(y)
     psi = np.pi - np.arctan2(y[1], -1*y[0]) - theta_L
@@ -65,8 +65,9 @@ def pd_controller(z, z_des):
 
     y_des = z_des[0:2]
     y_dot_des = z_des[2:4]
+    y_ddot_des = z_des[4:6]
 
-    v = constants.Kp*(y_des - y) + constants.Kd*(y_dot_des - y_dot)
+    v = y_ddot_des + constants.Kp*(y_des - y) + constants.Kd*(y_dot_des - y_dot)
     return v
 
 def flat_control_to_real_control(v, state, x_L_ddot):
