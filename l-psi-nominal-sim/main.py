@@ -16,27 +16,28 @@ v_F = 1
 
 # leader trajectory
 def x_L1_traj(t):
-    return 1
+    return np.cos(t)
 def x_L1_dot_traj(t):
-    return 0
+    return -np.sin(t)
 def x_L1_ddot_traj(t):
-    return 0
+    return -np.cos(t)
 def x_L2_traj(t):
-    return t+1
+    return np.sin(t)
 def x_L2_dot_traj(t):
-    return 1
+    return np.cos(t)
 def x_L2_ddot_traj(t):
-    return 0
+    return -1*np.sin(t)
 def theta_L_traj(t):
-    return np.pi / 2
+    return np.arctan2(x_L2_dot_traj(t), x_L1_dot_traj(t))
 def theta_L_dot_traj(t):
-    return 0
+    return 1
 def theta_L_ddot_traj(t):
     return 0
 def v_L_traj(t):
     return 1
 def v_L_dot_traj(t):
     return 0
+
 
 #initial flat output
 y1 = x_F1 - x_L1_traj(0)
@@ -52,15 +53,15 @@ state_ic = np.array([l, psi, theta_F, v_F])
 
 #desired output
 def l_des(time):
-    return 1
+    return 0.5
 def psi_des(time):
-    return 3*np.pi / 2
+    return np.pi / 2
 def l_dot_des(time):
     return 0
 def psi_dot_des(time):
     return 0
 def l_ddot_des(time):
-    return 0
+    return  0
 def psi_ddot_des(time):
     return 0
 
@@ -170,45 +171,45 @@ for t in time:
     i+=1
 
 # plots
-# l_des_traj = [l_des(t) for t in time]
-# plt.plot(time, state_traj[:, 0], label=r'$l$')
-# plt.plot(time, l_des_traj, label=r"$l_d$")
-# plt.legend()
-# plt.ylabel(r"$l$ (meter)")
-# plt.xlabel("time (second)")
-# # plt.title(r"$l$ vs time")
-# plt.savefig("l.png")
-# plt.show()
+l_des_traj = [l_des(t) for t in time]
+plt.plot(time, state_traj[:, 0], label=r'$l$')
+plt.plot(time, l_des_traj, label=r"$l_d$")
+plt.legend()
+plt.ylabel(r"$l$ (meter)")
+plt.xlabel("time (second)")
+# plt.title(r"$l$ vs time")
+plt.savefig("l.png")
+plt.show()
 
-# psi_des_traj = [psi_des(t) for t in time]
-# plt.plot(time, state_traj[:, 1], label=r'$\psi$')
-# plt.plot(time, psi_des_traj, label=r"$\psi_d$")
-# plt.legend()
-# plt.ylabel(r"$\psi$ (radian)")
-# plt.xlabel("time (second)")
-# # plt.title("psi vs time")
-# plt.savefig("psi.png")
-# plt.show()
+psi_des_traj = [psi_des(t) for t in time]
+plt.plot(time, state_traj[:, 1], label=r'$\psi$')
+plt.plot(time, psi_des_traj, label=r"$\psi_d$")
+plt.legend()
+plt.ylabel(r"$\psi$ (radian)")
+plt.xlabel("time (second)")
+# plt.title(r"$\psi$ vs time")
+plt.savefig("psi.png")
+plt.show()
 
-# plt.plot(time, state_traj[:, 2], label=r'$\theta_F$')
-# plt.ylabel(r"$\theta_F$ (radian)")
-# plt.xlabel("time (second)")
-# # plt.title("theta_F vs time")
-# plt.savefig("theta_F.png")
-# plt.show()
+plt.plot(time, state_traj[:, 2], label=r'$\theta_F$')
+plt.ylabel(r"$\theta_F$ (radian)")
+plt.xlabel("time (second)")
+# plt.title(r"$\theta_F$ vs time")
+plt.savefig("theta_F.png")
+plt.show()
 
-# plt.plot(time, state_traj[:, 3], label='v_F')
-# plt.ylabel(r"$v_F$ (meter/second)")
-# plt.xlabel("time (second)")
-# # plt.title("v_F vs time")
-# plt.savefig("v_F.png")
-# plt.show()
+plt.plot(time, state_traj[:, 3], label='v_F')
+plt.ylabel(r"$v_F$ (meter/second)")
+plt.xlabel("time (second)")
+# plt.title(r"$v_F$ vs time")
+plt.savefig("v_F.png")
+plt.show()
 
 indices = np.arange(0, N, 1)
-number_arrows = 10
+number_arrows = 11
 selected_indices = np.linspace(0, len(indices) - 1, number_arrows).astype(int)
 arrow_points = indices[selected_indices]
-arrow_colors = ['red', 'green', 'blue', 'orange', 'purple', 'cyan', 'magenta', 'yellow', 'brown', 'pink']
+arrow_colors = ['red', 'green', 'blue', 'orange', 'purple', 'cyan', 'magenta', 'yellow', 'brown', 'pink', 'black']
 
 x_L1_data = np.array([x_L1_traj(t) for t in time])
 x_L2_data = np.array([x_L2_traj(t) for t in time])
@@ -217,8 +218,16 @@ theta_L_data = np.array([theta_L_traj(t) for t in time])
 plt.plot(state_traj[:, 4], state_traj[:, 5], label="follower")
 plt.plot(x_L1_data, x_L2_data, label="leader")
 for i, point in enumerate(arrow_points):
-    plt.arrow(x_L1_data[point], x_L2_data[point], 0.1*np.cos(theta_L_data[point]), 0.1*np.sin(theta_L_data[point]), shape='full', lw=0.1, length_includes_head=True, head_width=.2, fc=arrow_colors[i], overhang=0.2)
-    plt.arrow(state_traj[point, 4], state_traj[point, 5], 0.1*np.cos(state_traj[point, 2]), 0.1*np.sin(state_traj[point, 2]), shape='full', lw=0.1, length_includes_head=True, head_width=.2, fc=arrow_colors[i], overhang=0.2)
+    plt.arrow(x_L1_data[point], x_L2_data[point], 0.1*np.cos(theta_L_data[point]), 0.1*np.sin(theta_L_data[point]),
+              shape='full', lw=0.1, length_includes_head=True, head_width=.2, fc=arrow_colors[i], overhang=0.2)
+    
+    plt.arrow(state_traj[point, 4], state_traj[point, 5], 0.1*np.cos(state_traj[point, 2]), 0.1*np.sin(state_traj[point, 2]),
+              shape='full', lw=0.1, length_includes_head=True, head_width=.2, fc=arrow_colors[i], overhang=0.2)
+
+    # Add timestamp next to the arrow
+    plt.text(x_L1_data[point], x_L2_data[point], f' t={time[point]:.2f}s', fontsize=8, ha='left', va='bottom', color='orange')
+    plt.text(state_traj[point, 4], state_traj[point, 5], f't={time[point]:.2f}s', fontsize=8, ha='right', va='bottom', color='blue')
+
 
 plt.legend()
 plt.ylabel(r"$x$ (meter)")

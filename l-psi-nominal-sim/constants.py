@@ -2,8 +2,8 @@ import numpy as np
 from random import uniform
 
 L = 1
-Kp = 1
-Kd = 2
+Kp = 5
+Kd = 3
 
 def atan2(x1, x2):
     return np.arctan2(x1, x2) + np.pi
